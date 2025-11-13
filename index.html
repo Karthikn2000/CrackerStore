@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CrackerStore — Demo</title>
+<style>
+  :root{
+    --orange:#ff6f00;
+    --dark:#111;
+    --muted:#666;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%; margin:0; font-family: Inter, Poppins, Arial, sans-serif; background:#000}
+  /* static bg image */
+  body{
+    background: url('images/bg.png') no-repeat center center fixed;
+    background-size: cover;
+    color:var(--dark);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  /* fireworks canvas sits behind content */
+  canvas#fw { position:fixed;left:0;top:0;width:100%;height:100%;z-index:-1;pointer-events:none; }
+
+  /* header bars */
+  header{ position:fixed; top:0; left:0; right:0; height:56px; display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(90deg,var(--orange),#ff3d00); color:#fff; z-index:40; font-weight:700; font-size:20px; }
+  .top2{ position:fixed; top:56px; left:0; right:0; height:64px; display:flex; align-items:center; justify-content:center; gap:16px;
+    background: rgba(255,111,0,0.95); z-index:40; padding:8px 12px; }
+  .search-wrap{ width:520px; max-width:60%; display:flex; align-items:center; background:#fff; border-radius:28px; padding:6px 10px; }
+  .search-wrap input{ border:0; outline:0; width:100%; font-size:15px; padding:6px; }
+  .search-icon{ margin-right:8px; color:#888; font-size:18px; }
+
+  /* cart button top-right */
+  #cartBtn{
+    position:absolute; right:18px; top:10px; z-index:45;
+    background:#fff; color:var(--orange); border:none; padding:8px 12px; border-radius:20px; cursor:pointer; font-weight:800;
+    box-shadow:0 6px 18px rgba(0,0,0,0.25);
+  }
+  #cartBadge{ display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:red; color:#fff; font-size:13px; margin-left:8px; visibility:hidden; }
+
+  /* layout */
+  .layout{ display:flex; padding-top:130px; gap:12px; min-height:calc(100vh - 130px); z-index:30; position:relative; }
+  .sidebar{
+    width:190px; padding:12px; position:sticky; top:120px; height:calc(100vh - 120px);
+    background:rgba(255,255,255,0.06); border-radius:8px; margin-left:12px;
+  }
+  .sidebar button{ display:block; width:100%; margin-bottom:10px; padding:10px; border-radius:8px; border:0; background:linear-gradient(90deg,#ff8a50,#ff5722); color:#fff; font-weight:700; cursor:pointer; }
+  .sidebar button.active{ outline:3px solid rgba(255,255,255,0.12) }
+
+  /* grid: fixed card size and tight spacing */
+  .grid{
+    flex:1; display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; padding:12px; align-items:start;
+  }
+  .card{
+    width:180px; min-height:260px; max-height:280px; background: rgba(255,255,255,0.96); color:#111; border-radius:10px; padding:10px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.18); display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .card img{ width:100%; height:130px; object-fit:cover; border-radius:8px; background:#f3f3f3; }
+  .card .name{ font-weight:700; margin-top:8px; min-height:38px; font-size:14px; }
+  .card .price{ color:var(--muted); margin-top:6px; font-weight:700; }
+  .qty{ display:flex; align-items:center; justify-content:center; gap:8px; margin-top:8px; }
+  .qty button{ width:30px; height:30px; border-radius:8px; border:0; background:var(--orange); color:#fff; font-size:18px; cursor:pointer; }
+  .qty span{ min-width:26px; text-align:center; font-weight:800; }
+
+  /* cart drawer: items scroll, details fixed at bottom */
+  #cartPanel{
+    position:fixed; right:0; top:0; width:360px; height:100%; transform:translateX(100%); background:#fff; color:#111; z-index:60;
+    box-shadow:-8px 0 30px rgba(0,0,0,0.35); display:flex; flex-direction:column;
+  }
+  #cartPanel.open{ transform:translateX(0); transition:transform .28s ease; }
+  .cart-header{ padding:12px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eee; }
+  .cart-body{ padding:12px; overflow:auto; flex:1; } /* scrollable list */
+  .cart-footer{ padding:12px; border-top:1px solid #eee; background:#fafafa; position:relative; } /* fixed area with fields */
+  .close-cart{ background:#ff6f00; color:#fff; border:0; border-radius:6px; padding:6px 10px; cursor:pointer; font-weight:700; }
+
+  .cart-row{ display:flex; justify-content:space-between; padding:10px 6px; border-bottom:1px dashed #eee; }
+  .cart-row .left{ font-weight:700; }
+  .cart-total{ font-size:18px; font-weight:800; margin-top:8px; }
+
+  .order-field{ width:100%; padding:8px; margin-top:8px; border-radius:6px; border:1px solid #ddd; }
+
+  /* responsive */
+  @media(max-width:900px){
+    .sidebar{ display:none; }
+    .card{ width:46vw; min-height:230px; max-height:260px; }
+    .search-wrap{ max-width:70%; width:60%; }
+    #cartPanel{ width:100%; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- fireworks canvas (behind UI) -->
+<canvas id="fw"></canvas>
+
+<header>🎇 CrackerStore</header>
+
+<div class="top2">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input id="searchInput" placeholder="Search crackers... (type to filter)">
+  </div>
+  <button id="cartBtn" aria-label="Open cart">🛒 <span id="cartBadge">0</span></button>
+</div>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <button data-cat="all" class="active">Home</button>
+    <button data-cat="Rocket">Rockets</button>
+    <button data-cat="Flowerpot">Flower Pots</button>
+    <button data-cat="Wala">Walas</button>
+    <button data-cat="Shot">Shots</button>
+    <button data-cat="Bomb">Bombs</button>
+    <button data-cat="Other">Others</button>
+  </aside>
+
+  <main class="grid" id="grid"></main>
+</div>
+
+<!-- cart panel -->
+<aside id="cartPanel" aria-hidden="true">
+  <div class="cart-header">
+    <div style="font-weight:800">Your Cart</div>
+    <button class="close-cart" id="closeCart">✕</button>
+  </div>
+
+  <div class="cart-body" id="cartBody">
+    <!-- cart items inserted here, this area scrolls -->
+    <div id="emptyHint" style="color:#666">No items in cart.</div>
+    <div id="cartList"></div>
+  </div>
+
+  <div class="cart-footer">
+    <div class="cart-total" id="cartTotal">Total: ₹0</div>
+    <input id="custName" class="order-field" placeholder="Customer name"/>
+    <input id="custAddress" class="order-field" placeholder="Address"/>
+    <input id="custPhone" class="order-field" placeholder="Phone number"/>
+    <button id="placeOrderBtn" class="order-field" style="background:var(--orange);color:#fff;border:none;margin-top:8px;font-weight:800;cursor:pointer">Place Order</button>
+  </div>
+</aside>
+
+<script>
+/* ---------- Data: generate 100 demo items ---------- */
+const baseItems = [
+  {name:'small rocket', cat:'Rocket'},
+  {name:'large rocket', cat:'Rocket'},
+  {name:'mega rocket', cat:'Rocket'},
+  {name:'color rocket', cat:'Rocket'},
+  {name:'sound rocket', cat:'Rocket'},
+
+  {name:'small pot', cat:'Flowerpot'},
+  {name:'medium pot', cat:'Flowerpot'},
+  {name:'large pot', cat:'Flowerpot'},
+  {name:'color sparkle pot', cat:'Flowerpot'},
+  {name:'deluxe pot', cat:'Flowerpot'},
+
+  {name:'25 wala', cat:'Wala'},
+  {name:'50 wala', cat:'Wala'},
+  {name:'100 wala', cat:'Wala'},
+  {name:'300 wala', cat:'Wala'},
+  {name:'1000 wala', cat:'Wala'},
+
+  {name:'single shot', cat:'Shot'},
+  {name:'5 shots', cat:'Shot'},
+  {name:'7 shots', cat:'Shot'},
+  {name:'25 shots', cat:'Shot'},
+  {name:'50 shots', cat:'Shot'},
+
+  {name:'small bomb', cat:'Bomb'},
+  {name:'large bomb', cat:'Bomb'},
+  {name:'thread bomb', cat:'Bomb'},
+  {name:'lakshmi bomb small', cat:'Bomb'},
+  {name:'lakshmi bomb large', cat:'Bomb'},
+
+  {name:'spark stick', cat:'Other'},
+  {name:'ground chakra', cat:'Other'},
+  {name:'magic pencil', cat:'Other'},
+  {name:'color sparkler', cat:'Other'},
+  {name:'kids combo pack', cat:'Other'}
+];
+
+const PRODUCTS = [];
+for(let i=0;i<100;i++){
+  const base = baseItems[i % baseItems.length];
+  PRODUCTS.push({
+    id: 'i' + (i+1),
+    name: `${base.name} ${Math.floor(i/ baseItems.length) + 1}`.replace(/\s+/g,' ').trim(),
+    cat: base.cat,
+    price: Math.round(20 + Math.random()*380),
+    img: `images/${(base.name.replace(/\s+/g,'').toLowerCase()) + (Math.floor(i/baseItems.length)+1)}.png` // expects images like images/smallrocket1.png etc.
+  });
+}
+
+/* ---------- build cards once ---------- */
+const grid = document.getElementById('grid');
+const qty = {}; // id -> qty
+const cardSpan = {}; // id -> span element to update qty
+PRODUCTS.forEach(p=>{
+  qty[p.id] = 0;
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.dataset.cat = p.cat;
+  el.dataset.name = p.name.toLowerCase();
+  el.innerHTML = `
+    <img src="${p.img}" alt="${p.name}" onerror="this.onerror=null;this.src='https://via.placeholder.com/300x200?text=No+Image'">
+    <div class="name">${p.name}</div>
+    <div class="price">₹${p.price}</div>
+    <div class="qty">
+      <button data-id="${p.id}" data-delta="-1">−</button>
+      <span id="qty-${p.id}">0</span>
+      <button data-id="${p.id}" data-delta="1">+</button>
+    </div>
+  `;
+  grid.appendChild(el);
+  cardSpan[p.id] = document.getElementById(`qty-${p.id}`);
+});
+
+/* ---------- helpers ---------- */
+function updateCartDisplay(){
+  const entries = PRODUCTS.filter(p => qty[p.id] > 0).map(p => ({...p, qty: qty[p.id]}));
+  const cartList = document.getElementById('cartList');
+  const emptyHint = document.getElementById('emptyHint');
+  cartList.innerHTML = '';
+  let total = 0;
+  if(entries.length === 0){
+    emptyHint.style.display = 'block';
+  } else {
+    emptyHint.style.display = 'none';
+    entries.forEach(it=>{
+      const r = document.createElement('div');
+      r.className = 'cart-row';
+      r.innerHTML = `<div class="left">${it.name} x ${it.qty}</div><div>₹${it.price * it.qty}</div>`;
+      cartList.appendChild(r);
+      total += it.price * it.qty;
+    });
+  }
+  document.getElementById('cartTotal').textContent = total ? `Total: ₹${total}` : 'Total: ₹0';
+  // badge
+  const badge = document.getElementById('cartBadge');
+  const count = entries.reduce((s,e)=>s+e.qty,0);
+  if(count>0){ badge.style.visibility='visible'; badge.textContent = count; } else { badge.style.visibility='hidden'; }
+}
+
+/* ---------- quantity click (event delegation) ---------- */
+grid.addEventListener('click', (ev)=>{
+  const btn = ev.target.closest('button[data-id]');
+  if(!btn) return;
+  const id = btn.getAttribute('data-id');
+  const delta = Number(btn.getAttribute('data-delta'));
+  qty[id] = Math.max(0, (qty[id]||0) + delta);
+  cardSpan[id].textContent = qty[id];
+  updateCartDisplay();
+});
+
+/* ---------- filters (sidebar) ---------- */
+document.querySelectorAll('.sidebar button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('.sidebar button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    const cat = b.dataset.cat || 'all';
+    document.querySelectorAll('.card').forEach(card=>{
+      const matches = (cat==='all' || card.dataset.cat.toLowerCase() === cat.toLowerCase());
+      card.style.display = matches ? '' : 'none';
+    });
+  });
+});
+
+/* ---------- search input ---------- */
+document.getElementById('searchInput').addEventListener('input', (e)=>{
+  const term = e.target.value.trim().toLowerCase();
+  document.querySelectorAll('.card').forEach(card=>{
+    const name = card.dataset.name;
+    const visibleByCat = card.style.display !== 'none';
+    const match = !term || name.includes(term);
+    card.style.display = match ? '' : 'none';
+  });
+});
+
+/* ---------- cart panel open/close and fixed footer behavior ---------- */
+const cartBtn = document.getElementById('cartBtn');
+const cartPanel = document.getElementById('cartPanel');
+const closeCart = document.getElementById('closeCart');
+
+cartBtn.addEventListener('click', ()=> {
+  cartPanel.classList.add('open');
+  cartPanel.setAttribute('aria-hidden','false');
+});
+closeCart.addEventListener('click', ()=> {
+  cartPanel.classList.remove('open');
+  cartPanel.setAttribute('aria-hidden','true');
+});
+
+/* ---------- place order (demo) ---------- */
+document.getElementById('placeOrderBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('custName').value.trim();
+  const addr = document.getElementById('custAddress').value.trim();
+  const phone = document.getElementById('custPhone').value.trim();
+  if(!name || !addr || !phone){ alert('Please fill name, address and phone.'); return; }
+  const entries = PRODUCTS.filter(p=>qty[p.id]>0).map(p=> `${p.name} x ${qty[p.id]} = ₹${p.price * qty[p.id]}`);
+  if(entries.length===0){ alert('Cart is empty'); return; }
+  const total = entries.reduce((s,e)=>{
+    const parts = e.split('=₹'); return s + Number(parts[1]);
+  },0);
+  alert('Order placed (demo):\n' + entries.join('\n') + '\n\nTotal: ₹' + total);
+});
+
+/* ---------- initial display ---------- */
+updateCartDisplay();
+
+/* ---------- fireworks canvas (lively, looping) ---------- */
+const canvas = document.getElementById('fw');
+const ctx = canvas.getContext('2d');
+function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+window.addEventListener('resize', resize);
+resize();
+
+let particles = [];
+function spawnBurst(){
+  const cx = Math.random()*(canvas.width*0.8)+canvas.width*0.1;
+  const cy = Math.random()*canvas.height*0.45 + 60;
+  const hue = Math.random()*360;
+  const n = 40 + Math.floor(Math.random()*40);
+  for(let i=0;i<n;i++){
+    particles.push({
+      x:cx, y:cy,
+      vx: Math.cos(i/n*2*Math.PI) * (1 + Math.random()*4),
+      vy: Math.sin(i/n*2*Math.PI) * (1 + Math.random()*4),
+      life: 40 + Math.random()*40,
+      hue
+    });
+  }
+}
+function step(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(let i=particles.length-1;i>=0;i--){
+    const p = particles[i];
+    p.x += p.vx; p.y += p.vy; p.vy += 0.03;
+    p.life--;
+    const a = Math.max(0, p.life/80);
+    ctx.globalAlpha = a;
+    ctx.fillStyle = `hsl(${p.hue} 100% 60%)`;
+    ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(1, p.life/18), 0, Math.PI*2); ctx.fill();
+    if(p.life<=0) particles.splice(i,1);
+  }
+  requestAnimationFrame(step);
+}
+setInterval(spawnBurst, 700);
+step();
+
+</script>
+</body>
+</html>
+
+
+
+
+
+
