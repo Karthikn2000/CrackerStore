@@ -265,18 +265,17 @@ const baseItems=[
 {name:'spark stick',cat:'Other'}
 ];
 
-const PRODUCTS=[];
-for(let i=0;i<60;i++){
-  const b=baseItems[i%baseItems.length];
+const PRODUCTS = [];
+for (let i = 0; i < 60; i++) {
+  const base = baseItems[i % baseItems.length]; // use 'base' as your reference
   PRODUCTS.push({
-  id: 'i' + (i+1),
-  name: `${base.name} ${Math.floor(i/baseItems.length)+1}`,
-  cat: base.cat,
-  price: Math.round(20 + Math.random()*380),
-  img: getCategoryImage(base.cat)
-});
+    id: 'i' + (i + 1),
+    name: `${base.name} ${Math.floor(i / baseItems.length) + 1}`,
+    cat: base.cat,
+    price: Math.round(20 + Math.random() * 380),
+    img: getCategoryImage(base.cat)
+  });
 }
-
 /* BUILD GRID */
 const grid=document.getElementById('grid');
 const qty={};
@@ -375,6 +374,7 @@ setInterval(()=>{
 </script>
 </body>
 </html>
+
 
 
 
