@@ -9,194 +9,108 @@
 :root{
   --orange:#ff6f00;
   --dark:#111;
-  --muted:#666;
 }
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;font-family:Inter,Arial,sans-serif;background:#000}
+html,body{margin:0;height:100%;font-family:Inter,Arial,sans-serif}
 
-/* background */
+/* ===== BACKGROUND (GITHUB RAW) ===== */
 body{
-  background:url('images/bg.png') no-repeat center center fixed;
+  background:url('https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/bg.png')
+  no-repeat center center fixed;
   background-size:cover;
-  color:#111;
 }
 
 /* fireworks */
-#fw{
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  pointer-events:none;
-}
+#fw{position:fixed;inset:0;z-index:-1;pointer-events:none}
 
 /* header */
 header{
-  position:fixed;
-  top:0;left:0;right:0;
-  height:56px;
+  position:fixed;top:0;left:0;right:0;height:56px;
   background:linear-gradient(90deg,var(--orange),#ff3d00);
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-  font-weight:800;
-  z-index:50;
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:800;z-index:50;
 }
 
 .top2{
-  position:fixed;
-  top:56px;left:0;right:0;
-  height:64px;
+  position:fixed;top:56px;left:0;right:0;height:64px;
   background:rgba(255,111,0,0.95);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:16px;
-  padding:8px;
-  z-index:45;
+  display:flex;align-items:center;justify-content:center;
+  gap:16px;padding:8px;z-index:45;
 }
 
 .search-wrap{
-  background:#fff;
-  border-radius:30px;
-  display:flex;
-  align-items:center;
-  padding:6px 12px;
-  width:520px;
-  max-width:70%;
+  background:#fff;border-radius:30px;
+  display:flex;align-items:center;padding:6px 12px;
+  width:520px;max-width:70%;
 }
-.search-wrap input{
-  border:0;
-  outline:0;
-  width:100%;
-  font-size:15px;
-}
+.search-wrap input{border:0;outline:0;width:100%;font-size:15px}
 
 #cartBtn{
-  position:absolute;
-  right:16px;
-  background:#fff;
-  color:var(--orange);
-  border:0;
-  padding:8px 14px;
-  border-radius:20px;
-  font-weight:800;
-  cursor:pointer;
+  position:absolute;right:16px;
+  background:#fff;color:var(--orange);
+  border:0;padding:8px 14px;border-radius:20px;
+  font-weight:800;cursor:pointer;
 }
-
 #cartBadge{
-  background:red;
-  color:#fff;
-  border-radius:50%;
-  padding:2px 6px;
-  margin-left:6px;
-  visibility:hidden;
+  background:red;color:#fff;border-radius:50%;
+  padding:2px 6px;margin-left:6px;visibility:hidden;
 }
 
 /* layout */
-.layout{
-  display:flex;
-  padding-top:130px;
-}
-
-.sidebar{
-  width:180px;
-  padding:12px;
-}
+.layout{display:flex;padding-top:130px}
+.sidebar{width:180px;padding:12px}
 .sidebar button{
-  width:100%;
-  margin-bottom:10px;
-  padding:10px;
-  border-radius:8px;
-  border:0;
+  width:100%;margin-bottom:10px;padding:10px;
+  border-radius:8px;border:0;
   background:linear-gradient(90deg,#ff8a50,#ff5722);
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
+  color:#fff;font-weight:700;cursor:pointer;
 }
 .sidebar button.active{outline:3px solid rgba(255,255,255,0.3)}
 
 .grid{
-  flex:1;
-  display:grid;
+  flex:1;display:grid;
   grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:12px;
-  padding:12px;
+  gap:12px;padding:12px;
 }
 
 /* cards */
 .card{
-  background:#fff;
-  border-radius:10px;
-  padding:10px;
+  background:#fff;border-radius:10px;padding:10px;
   box-shadow:0 8px 20px rgba(0,0,0,.2);
 }
 .card img{
-  width:100%;
-  height:130px;
-  object-fit:cover;
-  border-radius:8px;
+  width:100%;height:130px;
+  object-fit:cover;border-radius:8px;
 }
 .name{font-weight:700;margin-top:6px}
 .price{color:#666;font-weight:700}
 
 .qty{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:8px;
-  margin-top:6px;
+  display:flex;justify-content:center;align-items:center;
+  gap:8px;margin-top:6px;
 }
 .qty button{
-  width:30px;
-  height:30px;
-  border-radius:8px;
-  border:0;
-  background:var(--orange);
-  color:#fff;
-  font-size:18px;
-  cursor:pointer;
+  width:30px;height:30px;border-radius:8px;
+  border:0;background:var(--orange);
+  color:#fff;font-size:18px;cursor:pointer;
 }
 .qty span{min-width:24px;text-align:center;font-weight:800}
 
-/* cart panel */
+/* cart */
 #cartPanel{
-  position:fixed;
-  top:0;right:0;
-  width:360px;
-  height:100%;
-  background:#fff;
-  transform:translateX(100%);
-  transition:.3s;
-  z-index:100;
-  display:flex;
-  flex-direction:column;
+  position:fixed;top:0;right:0;width:360px;height:100%;
+  background:#fff;transform:translateX(100%);
+  transition:.3s;z-index:100;
+  display:flex;flex-direction:column;
 }
 #cartPanel.open{transform:translateX(0)}
-
-.cart-header{
-  padding:12px;
-  border-bottom:1px solid #eee;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
+.cart-header,.cart-footer{padding:12px;border-bottom:1px solid #eee}
 .cart-body{flex:1;overflow:auto;padding:12px}
-.cart-footer{padding:12px;border-top:1px solid #eee}
-
 .cart-row{
-  display:flex;
-  justify-content:space-between;
-  padding:8px 0;
-  border-bottom:1px dashed #ddd;
+  display:flex;justify-content:space-between;
+  padding:8px 0;border-bottom:1px dashed #ddd;
 }
-
-.order-field{
-  width:100%;
-  padding:8px;
-  margin-top:6px;
-}
+.order-field{width:100%;padding:8px;margin-top:6px}
 
 @media(max-width:900px){
   .sidebar{display:none}
@@ -213,8 +127,7 @@ header{
 
 <div class="top2">
   <div class="search-wrap">
-    🔍
-    <input id="searchInput" placeholder="Search crackers">
+    🔍 <input id="searchInput" placeholder="Search crackers">
   </div>
   <button id="cartBtn">🛒 <span id="cartBadge">0</span></button>
 </div>
@@ -229,11 +142,9 @@ header{
     <button data-cat="Bomb">Bombs</button>
     <button data-cat="Other">Others</button>
   </aside>
-
   <main class="grid" id="grid"></main>
 </div>
 
-<!-- CART -->
 <div id="cartPanel">
   <div class="cart-header">
     <b>Your Cart</b>
@@ -245,38 +156,58 @@ header{
     <input class="order-field" placeholder="Customer name">
     <input class="order-field" placeholder="Address">
     <input class="order-field" placeholder="Phone">
-    <button class="order-field" style="background:var(--orange);color:#fff;border:0;font-weight:800">Place Order</button>
+    <button class="order-field"
+      style="background:var(--orange);color:#fff;border:0;font-weight:800">
+      Place Order
+    </button>
   </div>
 </div>
 
 <script>
-/* DATA */
+/* ===== IMAGE MAP (GITHUB ONLY) ===== */
+const IMG_BASE =
+  "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/";
+
+function getCategoryImage(cat){
+  const map={
+    Rocket:"rocket.png",
+    Flowerpot:"flowerpot.png",
+    Wala:"wala.png",
+    Shot:"shot.png",
+    Bomb:"bomb.png",
+    Other:"other.png"
+  };
+  return IMG_BASE+(map[cat]||"other.png");
+}
+
+/* ===== DATA ===== */
 const baseItems=[
-{name:'small rocket',cat:'Rocket'},
-{name:'large rocket',cat:'Rocket'},
-{name:'mega rocket',cat:'Rocket'},
-{name:'small pot',cat:'Flowerpot'},
-{name:'medium pot',cat:'Flowerpot'},
-{name:'100 wala',cat:'Wala'},
-{name:'300 wala',cat:'Wala'},
-{name:'single shot',cat:'Shot'},
-{name:'5 shots',cat:'Shot'},
-{name:'small bomb',cat:'Bomb'},
-{name:'spark stick',cat:'Other'}
+  {name:'Small Rocket',cat:'Rocket'},
+  {name:'Large Rocket',cat:'Rocket'},
+  {name:'Mega Rocket',cat:'Rocket'},
+  {name:'Small Pot',cat:'Flowerpot'},
+  {name:'Medium Pot',cat:'Flowerpot'},
+  {name:'100 Wala',cat:'Wala'},
+  {name:'300 Wala',cat:'Wala'},
+  {name:'Single Shot',cat:'Shot'},
+  {name:'5 Shots',cat:'Shot'},
+  {name:'Small Bomb',cat:'Bomb'},
+  {name:'Spark Stick',cat:'Other'}
 ];
 
-const PRODUCTS = [];
-for (let i = 0; i < 60; i++) {
-  const base = baseItems[i % baseItems.length]; // use 'base' as your reference
+const PRODUCTS=[];
+for(let i=0;i<60;i++){
+  const b=baseItems[i%baseItems.length];
   PRODUCTS.push({
-    id: 'i' + (i + 1),
-    name: `${base.name} ${Math.floor(i / baseItems.length) + 1}`,
-    cat: base.cat,
-    price: Math.round(20 + Math.random() * 380),
-    img: getCategoryImage(base.cat)
+    id:'i'+(i+1),
+    name:`${b.name} ${Math.floor(i/baseItems.length)+1}`,
+    cat:b.cat,
+    price:Math.round(20+Math.random()*380),
+    img:getCategoryImage(b.cat)
   });
 }
-/* BUILD GRID */
+
+/* ===== GRID ===== */
 const grid=document.getElementById('grid');
 const qty={};
 
@@ -287,7 +218,7 @@ PRODUCTS.forEach(p=>{
   d.dataset.cat=p.cat;
   d.dataset.name=p.name.toLowerCase();
   d.innerHTML=`
-    <img src="${p.img}">
+    <img src="${p.img}" loading="lazy">
     <div class="name">${p.name}</div>
     <div class="price">₹${p.price}</div>
     <div class="qty">
@@ -298,39 +229,37 @@ PRODUCTS.forEach(p=>{
   grid.appendChild(d);
 });
 
-/* CART LOGIC */
-grid.addEventListener('click',e=>{
+/* ===== CART ===== */
+grid.onclick=e=>{
   const b=e.target.closest('button');
   if(!b)return;
   const id=b.dataset.id;
   qty[id]=Math.max(0,qty[id]+Number(b.dataset.d));
   document.getElementById('q-'+id).textContent=qty[id];
   renderCart();
-});
+};
 
 function renderCart(){
-  const list=document.getElementById('cartList');
-  list.innerHTML='';
   let total=0,count=0;
+  cartList.innerHTML='';
   PRODUCTS.forEach(p=>{
     if(qty[p.id]>0){
       count+=qty[p.id];
       total+=p.price*qty[p.id];
-      list.innerHTML+=`<div class="cart-row">
-        <span>${p.name} x ${qty[p.id]}</span>
-        <span>₹${p.price*qty[p.id]}</span>
-      </div>`;
+      cartList.innerHTML+=`
+        <div class="cart-row">
+          <span>${p.name} x ${qty[p.id]}</span>
+          <span>₹${p.price*qty[p.id]}</span>
+        </div>`;
     }
   });
-  document.getElementById('cartTotal').innerHTML='<b>Total: ₹'+total+'</b>';
-  const badge=document.getElementById('cartBadge');
-  badge.style.visibility=count?'visible':'hidden';
-  badge.textContent=count;
+  cartTotal.innerHTML='<b>Total: ₹'+total+'</b>';
+  cartBadge.style.visibility=count?'visible':'hidden';
+  cartBadge.textContent=count;
 }
-
 cartBtn.onclick=()=>cartPanel.classList.add('open');
 
-/* SEARCH */
+/* ===== SEARCH ===== */
 searchInput.oninput=e=>{
   const t=e.target.value.toLowerCase();
   document.querySelectorAll('.card').forEach(c=>{
@@ -338,10 +267,11 @@ searchInput.oninput=e=>{
   });
 };
 
-/* CATEGORY */
+/* ===== CATEGORY ===== */
 document.querySelectorAll('.sidebar button').forEach(b=>{
   b.onclick=()=>{
-    document.querySelectorAll('.sidebar button').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.sidebar button')
+      .forEach(x=>x.classList.remove('active'));
     b.classList.add('active');
     const c=b.dataset.cat;
     document.querySelectorAll('.card').forEach(card=>{
@@ -350,16 +280,17 @@ document.querySelectorAll('.sidebar button').forEach(b=>{
   };
 });
 
-/* FIREWORKS */
+/* ===== FIREWORKS ===== */
 const fw=document.getElementById('fw'),ctx=fw.getContext('2d');
-function rs(){fw.width=innerWidth;fw.height=innerHeight}rs();
-window.onresize=rs;
+function rs(){fw.width=innerWidth;fw.height=innerHeight}
+rs();window.onresize=rs;
 let ps=[];
 setInterval(()=>{
   const x=Math.random()*fw.width,y=Math.random()*fw.height*0.4,h=Math.random()*360;
-  for(let i=0;i<40;i++)ps.push({x,y,vx:Math.cos(i)*Math.random()*3,vy:Math.sin(i)*Math.random()*3,l:50,h});
+  for(let i=0;i<40;i++)
+    ps.push({x,y,vx:Math.cos(i)*Math.random()*3,
+             vy:Math.sin(i)*Math.random()*3,l:50,h});
 },700);
-
 (function anim(){
   ctx.clearRect(0,0,fw.width,fw.height);
   ps.forEach((p,i)=>{
@@ -372,8 +303,11 @@ setInterval(()=>{
   requestAnimationFrame(anim);
 })();
 </script>
+
 </body>
 </html>
+
+
 
 
 
