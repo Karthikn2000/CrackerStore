@@ -269,12 +269,12 @@ const PRODUCTS=[];
 for(let i=0;i<60;i++){
   const b=baseItems[i%baseItems.length];
   PRODUCTS.push({
-    id:'i'+i,
-    name:`${b.name} ${Math.floor(i/baseItems.length)+1}`,
-    cat:b.cat,
-    price:Math.floor(50+Math.random()*350),
-    img:'https://via.placeholder.com/300x200?text=Cracker'
-  });
+  id: 'i' + (i+1),
+  name: `${base.name} ${Math.floor(i/baseItems.length)+1}`,
+  cat: base.cat,
+  price: Math.round(20 + Math.random()*380),
+  img: getCategoryImage(base.cat)
+});
 }
 
 /* BUILD GRID */
@@ -375,6 +375,7 @@ setInterval(()=>{
 </script>
 </body>
 </html>
+
 
 
 
