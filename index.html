@@ -3,91 +3,205 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Store</title>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<title>CrackerStore — Demo</title>
 
 <style>
-:root{--orange:#ff6f00;--dark:#111;--muted:#666}
+:root{
+  --orange:#ff6f00;
+  --dark:#111;
+  --muted:#666;
+}
 *{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Arial;background:#000}
+html,body{margin:0;height:100%;font-family:Inter,Arial,sans-serif;background:#000}
+
+/* background */
 body{
-  background:url('images/bg.png') no-repeat center fixed;
-  background-size:cover;color:#111
+  background:url('images/bg.png') no-repeat center center fixed;
+  background-size:cover;
+  color:#111;
 }
-canvas#fw{position:fixed;inset:0;z-index:-1}
+
+/* fireworks */
+#fw{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+}
+
+/* header */
 header{
-  position:fixed;top:0;left:0;right:0;height:56px;
+  position:fixed;
+  top:0;left:0;right:0;
+  height:56px;
   background:linear-gradient(90deg,var(--orange),#ff3d00);
-  color:#fff;display:flex;align-items:center;justify-content:center;
-  font-size:20px;font-weight:800;z-index:40
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  font-weight:800;
+  z-index:50;
 }
+
 .top2{
-  position:fixed;top:56px;left:0;right:0;height:64px;
-  background:rgba(255,111,0,.95);
-  display:flex;align-items:center;justify-content:center;
-  gap:16px;z-index:40
+  position:fixed;
+  top:56px;left:0;right:0;
+  height:64px;
+  background:rgba(255,111,0,0.95);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  padding:8px;
+  z-index:45;
 }
+
 .search-wrap{
-  background:#fff;border-radius:28px;padding:6px 10px;
-  display:flex;align-items:center;width:520px;max-width:70%
+  background:#fff;
+  border-radius:30px;
+  display:flex;
+  align-items:center;
+  padding:6px 12px;
+  width:520px;
+  max-width:70%;
 }
-.search-wrap input{border:0;outline:0;width:100%;font-size:15px}
+.search-wrap input{
+  border:0;
+  outline:0;
+  width:100%;
+  font-size:15px;
+}
+
 #cartBtn{
-  position:absolute;right:18px;top:10px;
-  background:#fff;border:0;border-radius:20px;
-  padding:8px 12px;font-weight:800;color:var(--orange)
+  position:absolute;
+  right:16px;
+  background:#fff;
+  color:var(--orange);
+  border:0;
+  padding:8px 14px;
+  border-radius:20px;
+  font-weight:800;
+  cursor:pointer;
 }
+
 #cartBadge{
-  background:red;color:#fff;border-radius:50%;
-  width:22px;height:22px;display:inline-flex;
-  align-items:center;justify-content:center;margin-left:6px;
-  visibility:hidden
+  background:red;
+  color:#fff;
+  border-radius:50%;
+  padding:2px 6px;
+  margin-left:6px;
+  visibility:hidden;
 }
-.layout{display:flex;padding-top:130px;gap:12px}
+
+/* layout */
+.layout{
+  display:flex;
+  padding-top:130px;
+}
+
 .sidebar{
-  width:190px;padding:12px;position:sticky;top:120px;
-  height:calc(100vh - 120px);
-  background:rgba(255,255,255,.06);border-radius:8px
+  width:180px;
+  padding:12px;
 }
 .sidebar button{
-  width:100%;margin-bottom:10px;padding:10px;
-  border:0;border-radius:8px;
+  width:100%;
+  margin-bottom:10px;
+  padding:10px;
+  border-radius:8px;
+  border:0;
   background:linear-gradient(90deg,#ff8a50,#ff5722);
-  color:#fff;font-weight:700
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
 }
-.sidebar button.active{outline:3px solid rgba(255,255,255,.2)}
+.sidebar button.active{outline:3px solid rgba(255,255,255,0.3)}
+
 .grid{
-  flex:1;display:grid;
+  flex:1;
+  display:grid;
   grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:12px;padding:12px
+  gap:12px;
+  padding:12px;
 }
+
+/* cards */
 .card{
-  background:#fff;border-radius:10px;padding:10px;
-  display:flex;flex-direction:column;justify-content:space-between
+  background:#fff;
+  border-radius:10px;
+  padding:10px;
+  box-shadow:0 8px 20px rgba(0,0,0,.2);
 }
-.card img{width:100%;height:130px;object-fit:cover;border-radius:8px}
-.name{font-weight:700;margin-top:8px;font-size:14px}
-.price{font-weight:700;color:var(--muted)}
-.qty{display:flex;justify-content:center;gap:8px;margin-top:8px}
+.card img{
+  width:100%;
+  height:130px;
+  object-fit:cover;
+  border-radius:8px;
+}
+.name{font-weight:700;margin-top:6px}
+.price{color:#666;font-weight:700}
+
+.qty{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  margin-top:6px;
+}
 .qty button{
-  width:30px;height:30px;border-radius:8px;
-  background:var(--orange);color:#fff;border:0;font-size:18px
+  width:30px;
+  height:30px;
+  border-radius:8px;
+  border:0;
+  background:var(--orange);
+  color:#fff;
+  font-size:18px;
+  cursor:pointer;
 }
-.qty span{min-width:26px;text-align:center;font-weight:800}
+.qty span{min-width:24px;text-align:center;font-weight:800}
+
+/* cart panel */
 #cartPanel{
-  position:fixed;right:0;top:0;width:360px;height:100%;
-  background:#fff;transform:translateX(100%);
-  transition:.25s;z-index:60;display:flex;flex-direction:column
+  position:fixed;
+  top:0;right:0;
+  width:360px;
+  height:100%;
+  background:#fff;
+  transform:translateX(100%);
+  transition:.3s;
+  z-index:100;
+  display:flex;
+  flex-direction:column;
 }
 #cartPanel.open{transform:translateX(0)}
-.cart-header{padding:12px;border-bottom:1px solid #eee;
-  display:flex;justify-content:space-between}
+
+.cart-header{
+  padding:12px;
+  border-bottom:1px solid #eee;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
 .cart-body{flex:1;overflow:auto;padding:12px}
-.cart-footer{border-top:1px solid #eee;padding:12px}
-.cart-row{display:flex;justify-content:space-between;margin-bottom:8px}
+.cart-footer{padding:12px;border-top:1px solid #eee}
+
+.cart-row{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px dashed #ddd;
+}
+
+.order-field{
+  width:100%;
+  padding:8px;
+  margin-top:6px;
+}
+
+@media(max-width:900px){
+  .sidebar{display:none}
+  #cartPanel{width:100%}
+}
 </style>
 </head>
 
@@ -95,159 +209,173 @@ header{
 
 <canvas id="fw"></canvas>
 
-<header id="storeName">Store</header>
+<header>🎇 CrackerStore</header>
 
 <div class="top2">
   <div class="search-wrap">
-    🔍 <input id="searchInput" placeholder="Search">
+    🔍
+    <input id="searchInput" placeholder="Search crackers">
   </div>
   <button id="cartBtn">🛒 <span id="cartBadge">0</span></button>
 </div>
 
 <div class="layout">
-  <aside class="sidebar" id="sidebar"></aside>
+  <aside class="sidebar">
+    <button data-cat="all" class="active">Home</button>
+    <button data-cat="Rocket">Rockets</button>
+    <button data-cat="Flowerpot">Flower Pots</button>
+    <button data-cat="Wala">Walas</button>
+    <button data-cat="Shot">Shots</button>
+    <button data-cat="Bomb">Bombs</button>
+    <button data-cat="Other">Others</button>
+  </aside>
+
   <main class="grid" id="grid"></main>
 </div>
 
-<aside id="cartPanel">
+<!-- CART -->
+<div id="cartPanel">
   <div class="cart-header">
-    <b>Cart</b>
-    <button onclick="toggleCart()">✕</button>
+    <b>Your Cart</b>
+    <button onclick="cartPanel.classList.remove('open')">✕</button>
   </div>
   <div class="cart-body" id="cartList"></div>
   <div class="cart-footer">
-    <div id="cartTotal"></div>
-    <button id="orderBtn"></button>
+    <div id="cartTotal"><b>Total: ₹0</b></div>
+    <input class="order-field" placeholder="Customer name">
+    <input class="order-field" placeholder="Address">
+    <input class="order-field" placeholder="Phone">
+    <button class="order-field" style="background:var(--orange);color:#fff;border:0;font-weight:800">Place Order</button>
   </div>
-</aside>
+</div>
 
 <script>
-/* 🔥 FIREBASE CONFIG */
-firebase.initializeApp({
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_DOMAIN",
-  databaseURL: "YOUR_DB_URL",
-  projectId: "YOUR_PROJECT_ID"
-});
-const db = firebase.database();
+/* DATA */
+const baseItems=[
+{name:'small rocket',cat:'Rocket'},
+{name:'large rocket',cat:'Rocket'},
+{name:'mega rocket',cat:'Rocket'},
+{name:'small pot',cat:'Flowerpot'},
+{name:'medium pot',cat:'Flowerpot'},
+{name:'100 wala',cat:'Wala'},
+{name:'300 wala',cat:'Wala'},
+{name:'single shot',cat:'Shot'},
+{name:'5 shots',cat:'Shot'},
+{name:'small bomb',cat:'Bomb'},
+{name:'spark stick',cat:'Other'}
+];
 
-let SETTINGS={}, PRODUCTS={}, CART={};
-
-/* SETTINGS */
-db.ref("settings").on("value",s=>{
-  SETTINGS=s.val()||{};
-  storeName.innerText=SETTINGS.storeName||"Store";
-  orderBtn.innerText=SETTINGS.placeOrderText||"Order";
-});
-
-/* CATEGORIES */
-db.ref("categories").on("value",snap=>{
-  sidebar.innerHTML="";
-  snap.forEach(c=>{
-    const b=document.createElement("button");
-    b.innerText=c.val();
-    b.onclick=()=>filterCat(c.key);
-    sidebar.appendChild(b);
+const PRODUCTS=[];
+for(let i=0;i<60;i++){
+  const b=baseItems[i%baseItems.length];
+  PRODUCTS.push({
+    id:'i'+i,
+    name:`${b.name} ${Math.floor(i/baseItems.length)+1}`,
+    cat:b.cat,
+    price:Math.floor(50+Math.random()*350),
+    img:'https://via.placeholder.com/300x200?text=Cracker'
   });
-});
-
-/* PRODUCTS */
-db.ref("products").on("value",snap=>{
-  PRODUCTS={}; grid.innerHTML="";
-  snap.forEach(p=>{
-    const d=p.val(); PRODUCTS[p.key]=d; CART[p.key]=CART[p.key]||0;
-    const card=document.createElement("div");
-    card.className="card";
-    card.dataset.cat=d.category;
-    card.dataset.name=d.name.toLowerCase();
-    card.innerHTML=`
-      <img src="${d.image}">
-      <div class="name">${d.name}</div>
-      <div class="price">${SETTINGS.currency||"₹"}${d.price}</div>
-      <div class="qty">
-        <button onclick="addQty('${p.key}',-1)">-</button>
-        <span id="q-${p.key}">${CART[p.key]}</span>
-        <button onclick="addQty('${p.key}',1)">+</button>
-      </div>`;
-    grid.appendChild(card);
-  });
-});
-
-/* QTY */
-function addQty(id,d){
-  CART[id]=Math.max(0,CART[id]+d);
-  document.getElementById("q-"+id).innerText=CART[id];
-  updateCart();
 }
 
-/* CART */
-function updateCart(){
-  cartList.innerHTML="";
+/* BUILD GRID */
+const grid=document.getElementById('grid');
+const qty={};
+
+PRODUCTS.forEach(p=>{
+  qty[p.id]=0;
+  const d=document.createElement('div');
+  d.className='card';
+  d.dataset.cat=p.cat;
+  d.dataset.name=p.name.toLowerCase();
+  d.innerHTML=`
+    <img src="${p.img}">
+    <div class="name">${p.name}</div>
+    <div class="price">₹${p.price}</div>
+    <div class="qty">
+      <button data-id="${p.id}" data-d="-1">−</button>
+      <span id="q-${p.id}">0</span>
+      <button data-id="${p.id}" data-d="1">+</button>
+    </div>`;
+  grid.appendChild(d);
+});
+
+/* CART LOGIC */
+grid.addEventListener('click',e=>{
+  const b=e.target.closest('button');
+  if(!b)return;
+  const id=b.dataset.id;
+  qty[id]=Math.max(0,qty[id]+Number(b.dataset.d));
+  document.getElementById('q-'+id).textContent=qty[id];
+  renderCart();
+});
+
+function renderCart(){
+  const list=document.getElementById('cartList');
+  list.innerHTML='';
   let total=0,count=0;
-  for(let id in CART){
-    if(CART[id]>0){
-      const p=PRODUCTS[id];
-      total+=p.price*CART[id]; count+=CART[id];
-      cartList.innerHTML+=`
-      <div class="cart-row">
-        <div>
-          <button onclick="addQty('${id}',-1)">-</button>
-          ${p.name} x ${CART[id]}
-          <button onclick="addQty('${id}',1)">+</button>
-        </div>
-        <div>${SETTINGS.currency||"₹"}${p.price*CART[id]}</div>
+  PRODUCTS.forEach(p=>{
+    if(qty[p.id]>0){
+      count+=qty[p.id];
+      total+=p.price*qty[p.id];
+      list.innerHTML+=`<div class="cart-row">
+        <span>${p.name} x ${qty[p.id]}</span>
+        <span>₹${p.price*qty[p.id]}</span>
       </div>`;
     }
-  }
-  cartTotal.innerText="Total: "+(SETTINGS.currency||"₹")+total;
-  cartBadge.style.visibility=count? "visible":"hidden";
-  cartBadge.innerText=count;
-}
-
-/* FILTER */
-function filterCat(cat){
-  document.querySelectorAll(".card").forEach(c=>{
-    c.style.display=(cat==="all"||c.dataset.cat===cat)?"":"none";
   });
+  document.getElementById('cartTotal').innerHTML='<b>Total: ₹'+total+'</b>';
+  const badge=document.getElementById('cartBadge');
+  badge.style.visibility=count?'visible':'hidden';
+  badge.textContent=count;
 }
 
-/* CART TOGGLE */
-cartBtn.onclick=toggleCart;
-function toggleCart(){
-  cartPanel.classList.toggle("open");
-}
-
-/* ORDER */
-orderBtn.onclick=()=>{
-  let msg="Order:\n";
-  for(let id in CART) if(CART[id]>0)
-    msg+=PRODUCTS[id].name+" x "+CART[id]+"\n";
-  window.open(`https://wa.me/${SETTINGS.whatsappNumber}?text=${encodeURIComponent(msg)}`);
-};
+cartBtn.onclick=()=>cartPanel.classList.add('open');
 
 /* SEARCH */
 searchInput.oninput=e=>{
   const t=e.target.value.toLowerCase();
-  document.querySelectorAll(".card").forEach(c=>{
-    c.style.display=c.dataset.name.includes(t)?"":"none";
+  document.querySelectorAll('.card').forEach(c=>{
+    c.style.display=c.dataset.name.includes(t)?'':'none';
   });
 };
 
-/* FIREWORKS (UNCHANGED) */
-const fw=document.getElementById("fw"),ctx=fw.getContext("2d");
+/* CATEGORY */
+document.querySelectorAll('.sidebar button').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('.sidebar button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    const c=b.dataset.cat;
+    document.querySelectorAll('.card').forEach(card=>{
+      card.style.display=(c==='all'||card.dataset.cat===c)?'':'none';
+    });
+  };
+});
+
+/* FIREWORKS */
+const fw=document.getElementById('fw'),ctx=fw.getContext('2d');
 function rs(){fw.width=innerWidth;fw.height=innerHeight}rs();
-window.onresize=rs;let P=[];
-setInterval(()=>{const x=Math.random()*fw.width,y=Math.random()*fw.height/2;
-for(let i=0;i<50;i++)P.push({x,y,vx:Math.cos(i)*3,vy:Math.sin(i)*3,l:50})},800);
-(function a(){
-ctx.clearRect(0,0,fw.width,fw.height);
-P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.l--;ctx.fillStyle="orange";
-ctx.fillRect(p.x,p.y,2,2)});
-P=P.filter(p=>p.l>0);requestAnimationFrame(a);
+window.onresize=rs;
+let ps=[];
+setInterval(()=>{
+  const x=Math.random()*fw.width,y=Math.random()*fw.height*0.4,h=Math.random()*360;
+  for(let i=0;i<40;i++)ps.push({x,y,vx:Math.cos(i)*Math.random()*3,vy:Math.sin(i)*Math.random()*3,l:50,h});
+},700);
+
+(function anim(){
+  ctx.clearRect(0,0,fw.width,fw.height);
+  ps.forEach((p,i)=>{
+    p.x+=p.vx;p.y+=p.vy;p.vy+=.02;p.l--;
+    ctx.fillStyle=`hsl(${p.h},100%,60%)`;
+    ctx.globalAlpha=p.l/50;
+    ctx.beginPath();ctx.arc(p.x,p.y,2,0,6.28);ctx.fill();
+    if(p.l<=0)ps.splice(i,1);
+  });
+  requestAnimationFrame(anim);
 })();
 </script>
 </body>
 </html>
+
 
 
 
